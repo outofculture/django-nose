@@ -1,4 +1,4 @@
-
+from threaded_server import ThreadedServer
 
 class ResultPlugin(object):
     """
@@ -34,13 +34,17 @@ class DjangoSetUpPlugin(object):
     def __init__(self, runner):
         super(DjangoSetUpPlugin, self).__init__()
         self.runner = runner
+        self.threaded_server = ThreadedServer()
 
     def begin(self):
         """Setup the environment"""
         self.runner.setup_test_environment()
         self.old_names = self.runner.setup_databases()
-
+        self.threaded_server.start()
+        
     def finalize(self, result):
         """Destroy the environment"""
+        #import ipdb; ipdb.set_trace()
         self.runner.teardown_databases(self.old_names)
         self.runner.teardown_test_environment()
+        self.threaded_server.stop()
